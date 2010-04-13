@@ -1,0 +1,14 @@
+svn-notifier
+============
+
+A SVN GUI to notify commit.
+
+Pull changes from repository very N seconds.
+
+Most svn-xx code is from anjuta/plugins/subversion.
+
+Copyright
+=========
+
+GPL 2.0
+

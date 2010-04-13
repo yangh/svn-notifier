@@ -24,6 +24,9 @@
 
 #include "svn-command.h"
 
+#include <gtk/gtk.h>
+#define GLADE_FILE "anjuta-subversion.ui"
+
 struct _SvnCommandPriv
 {
 	svn_client_ctx_t *client_context;

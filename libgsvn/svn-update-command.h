@@ -28,7 +28,10 @@
 #ifndef _SVN_UPDATE_COMMAND_H_
 #define _SVN_UPDATE_COMMAND_H_
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include "svn-command.h"

@@ -13,10 +13,6 @@ INCLUDE_DIRECTORIES(
     )
 
 SET( GSVN_SRCS 
-    anjuta-async-command.c
-    anjuta-async-notify.c
-    anjuta-command.c
-    anjuta-command-queue.c
     svn-add-command.c
     svn-cat-command.c
     svn-checkout-command.c
@@ -38,7 +34,7 @@ SET( GSVN_SRCS
 
 ADD_LIBRARY( gsvn SHARED ${GSVN_SRCS} )
 
-TARGET_LINK_LIBRARIES( gsvn
+TARGET_LINK_LIBRARIES( gsvn anjutacmd
     ${GLIB2_LIBRARIES}
     ${SVN_DEP_LIBRARIES}
     ${SVN_CLIENT_LIBRARIES}
