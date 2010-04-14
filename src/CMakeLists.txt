@@ -16,6 +16,8 @@ SET( SVN_SRCS
 
 ADD_EXECUTABLE( test-svn ${SVN_SRCS} )
 TARGET_LINK_LIBRARIES( test-svn
+    gsvn
+    anjutacmd
     ${GLIB2_LIBRARIES}
     ${SVN_DEP_LIBRARIES}
     ${SVN_CLIENT_LIBRARIES}
