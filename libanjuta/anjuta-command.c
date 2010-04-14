@@ -243,7 +243,7 @@ void
 anjuta_command_set_error_message (AnjutaCommand *self, gchar *error_message)
 {
 	if (self->priv->error_message)
-		g_free (error_message);
+		g_free (self->priv->error_message);
 	
 	self->priv->error_message = g_strdup (error_message);
 }
