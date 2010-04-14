@@ -8,12 +8,18 @@
 #include "libanjuta/anjuta-command.h"
 #include "libanjuta/anjuta-async-command.h"
 
+static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+static gboolean query_running = FALSE;
+
+static const char *path = NULL;
+static gulong last_rev = 1;
+static gint delay = 5;
+
 void log_arrived (SvnLogCommand *cmd)
 {
     GQueue *entries = NULL;
     SvnLogEntry *entry = NULL;
 
-    //anjuta_async_command_lock(cmd);
     entries = svn_log_command_get_entry_queue(cmd);
     while(! g_queue_is_empty (entries)) {
         entry = g_queue_pop_tail(entries);
@@ -22,14 +28,44 @@ void log_arrived (SvnLogCommand *cmd)
                 svn_log_entry_get_author(entry),
                 svn_log_entry_get_date(entry),
                 svn_log_entry_get_short_log(entry));
+        last_rev = svn_log_entry_get_revision(entry);
         svn_log_entry_destroy (entry);
     }
-    //anjuta_async_command_unlock(cmd);
 }
 
-gboolean query_log (SvnLogCommand *log)
+void log_finished (SvnLogCommand *cmd, guint return_code)
 {
-    anjuta_command_start(log);
+    /*
+    g_message ("Log finished. ret = %d", return_code);
+    */
+    svn_log_command_destroy (cmd);
+
+    g_static_mutex_lock (&mutex);
+    query_running = FALSE;
+    g_static_mutex_unlock (&mutex);
+}
+
+gboolean query_log (gpointer data)
+{
+    SvnLogCommand *log = NULL;
+    
+    g_static_mutex_lock (&mutex);
+    if (query_running) {
+        g_static_mutex_unlock (&mutex);
+        return TRUE;
+    }
+
+    log = svn_log_command_new (path);
+    svn_log_command_set_start_rev (log, last_rev + 1);
+    g_signal_connect (log, "data-arrived", (GCallback) log_arrived, NULL);
+    g_signal_connect (log, "command-finished", (GCallback) log_finished, NULL);
+
+    query_running = TRUE;
+    g_static_mutex_unlock (&mutex);
+
+    anjuta_command_start(ANJUTA_COMMAND(log));
+
+    return TRUE;
 }
 
 int main(int argc, char *argv[])
@@ -45,19 +81,13 @@ int main(int argc, char *argv[])
 
     gtk_init (&argc, &argv);
 
-    const char *path = argv[1];
-    gulong rev = atoi(argv[2]);
-    gint delay = atoi(argv[3]);
+    path = argv[1];
+    last_rev = atoi(argv[2]);
+    delay = atoi(argv[3]);
 
-    SvnLogCommand *log = svn_log_command_new (path);
+    query_log(NULL);
 
-    svn_log_command_set_start_rev (log, rev);
-
-    g_signal_connect (log, "data-arrived", (GCallback) log_arrived, NULL);
-
-    anjuta_command_start(log);
-
-    g_timeout_add (1000 * delay, (GSourceFunc) query_log, log);
+    g_timeout_add (1000 * delay, (GSourceFunc) query_log, NULL);
 
     gtk_main ();
 
