@@ -24,6 +24,7 @@
 
 #include "svn-command.h"
 
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #define GLADE_FILE "anjuta-subversion.ui"
 

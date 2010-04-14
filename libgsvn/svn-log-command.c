@@ -27,6 +27,7 @@
 struct _SvnLogCommandPriv
 {
 	gchar *path;
+	gulong start_rev;
 	GQueue *log_entry_queue;
 };
 
@@ -37,6 +38,7 @@ svn_log_command_init (SvnLogCommand *self)
 {
 	self->priv = g_new0 (SvnLogCommandPriv, 1);
 	self->priv->log_entry_queue = g_queue_new ();
+	self->priv->start_rev = 1;
 }
 
 static void
@@ -82,6 +84,8 @@ log_callback (void *baton,
 	
 	self = SVN_LOG_COMMAND (baton);
 	
+	self->priv->start_rev = (gulong) revision + 1;
+
 	/* Libsvn docs say author, date, and message might be NULL. */
 	if (author)
 		entry_author = g_strdup (author);
@@ -135,7 +139,7 @@ svn_log_command_run (AnjutaCommand *command)
 	(*((const char **) apr_array_push (log_path))) = self->priv->path;
 	peg_revision.kind = svn_opt_revision_unspecified;
 	start_revision.kind = svn_opt_revision_number;
-	start_revision.value.number = 1;  /* Initial revision */
+	start_revision.value.number = svn_log_command_get_start_rev(command);  /* Initial revision */
 	end_revision.kind = svn_opt_revision_head;
 	
 	error = svn_client_log3 (log_path,
@@ -184,6 +188,18 @@ void
 svn_log_command_destroy (SvnLogCommand *self)
 {
 	g_object_unref (self);
+}
+
+void
+svn_log_command_set_start_rev (SvnLogCommand *self, gulong rev)
+{
+	self->priv->start_rev = rev;
+}
+
+gulong
+svn_log_command_get_start_rev (SvnLogCommand *self)
+{
+	return self->priv->start_rev;
 }
 
 GQueue *
