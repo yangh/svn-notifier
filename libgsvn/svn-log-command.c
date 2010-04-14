@@ -139,7 +139,7 @@ svn_log_command_run (AnjutaCommand *command)
 	(*((const char **) apr_array_push (log_path))) = self->priv->path;
 	peg_revision.kind = svn_opt_revision_unspecified;
 	start_revision.kind = svn_opt_revision_number;
-	start_revision.value.number = svn_log_command_get_start_rev(command);  /* Initial revision */
+	start_revision.value.number = svn_log_command_get_start_rev(self);  /* Initial revision */
 	end_revision.kind = svn_opt_revision_head;
 	
 	error = svn_client_log3 (log_path,
@@ -157,9 +157,13 @@ svn_log_command_run (AnjutaCommand *command)
 	if (error)
 	{
 		svn_command_set_error (svn_command, error);
+		anjuta_command_notify_complete(command, 1);
+
 		return 1;
 	}
 	
+	anjuta_command_notify_complete(command, 0);
+
 	return 0;
 }
 
