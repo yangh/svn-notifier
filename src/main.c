@@ -13,7 +13,12 @@ static const char *path = NULL;
 static gulong last_rev = 1;
 static gint delay = 5;
 
-void log_arrived (SvnLogCommand *cmd)
+static void log_arrived (SvnLogCommand *cmd);
+static void log_finished (SvnLogCommand *cmd, guint return_code);
+static gboolean query_log (gpointer data);
+
+static void
+log_arrived (SvnLogCommand *cmd)
 {
     GQueue *entries = NULL;
     SvnLogEntry *entry = NULL;
@@ -32,7 +37,8 @@ void log_arrived (SvnLogCommand *cmd)
     }
 }
 
-void log_finished (SvnLogCommand *cmd, guint return_code)
+static void
+log_finished (SvnLogCommand *cmd, guint return_code)
 {
     //g_message ("Log finished. ret = %d", return_code);
     svn_log_command_destroy (cmd);
@@ -42,7 +48,8 @@ void log_finished (SvnLogCommand *cmd, guint return_code)
     g_static_mutex_unlock (&mutex);
 }
 
-gboolean query_log (gpointer data)
+static gboolean
+query_log (gpointer data)
 {
     SvnLogCommand *log = NULL;
     
@@ -66,7 +73,8 @@ gboolean query_log (gpointer data)
     return TRUE;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     if (argc < 4) {
         g_print ("Usage: %s <path> <start_rev> <query-delay>\n", argv[0]);
@@ -93,3 +101,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
