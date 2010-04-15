@@ -1,7 +1,5 @@
-#include <glib.h>
-#include <gtk/gtk.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <gtk/gtk.h>
 
 #include "libgsvn/svn-log-command.h"
 #include "libgsvn/svn-log-entry.h"
@@ -21,6 +19,7 @@ void log_arrived (SvnLogCommand *cmd)
     SvnLogEntry *entry = NULL;
 
     entries = svn_log_command_get_entry_queue(cmd);
+
     while(! g_queue_is_empty (entries)) {
         entry = g_queue_pop_tail(entries);
         g_print (" r%ld | %8s | %s | %s\n",
@@ -35,9 +34,7 @@ void log_arrived (SvnLogCommand *cmd)
 
 void log_finished (SvnLogCommand *cmd, guint return_code)
 {
-    /*
-    g_message ("Log finished. ret = %d", return_code);
-    */
+    //g_message ("Log finished. ret = %d", return_code);
     svn_log_command_destroy (cmd);
 
     g_static_mutex_lock (&mutex);
@@ -63,6 +60,7 @@ gboolean query_log (gpointer data)
     query_running = TRUE;
     g_static_mutex_unlock (&mutex);
 
+    //g_message ("Log start.");
     anjuta_command_start(ANJUTA_COMMAND(log));
 
     return TRUE;
@@ -71,7 +69,7 @@ gboolean query_log (gpointer data)
 int main(int argc, char *argv[])
 {
     if (argc < 4) {
-        printf ("Usage: %s <path> <start_rev> <query-delay>\n", argv[0]);
+        g_print ("Usage: %s <path> <start_rev> <query-delay>\n", argv[0]);
         exit(1);
     }
 
