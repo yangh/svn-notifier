@@ -1,11 +1,16 @@
 svn-notifier
 ============
 
-A SVN GUI to notify commit.
+  A SVN GUI to notify commit.
 
-Pull changes from repository very N seconds.
+  Pull changes from repository very N seconds.
 
-Most svn-xx code is from anjuta/plugins/subversion.
+  Most svn-xx code is from anjuta/plugins/subversion.
+
+Alternative
+===========
+
+ There is a script in the scripts/query-svn-log.sh can do same thing well.
 
 Copyright
 =========
