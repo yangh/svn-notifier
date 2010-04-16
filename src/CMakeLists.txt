@@ -12,6 +12,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}
 
 SET( SVN_SRCS
     main.c
+    svn-notify.c
     )
 
 ADD_EXECUTABLE( test-svn ${SVN_SRCS} )

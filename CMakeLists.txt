@@ -8,7 +8,7 @@ FIND_PACKAGE(PkgConfig REQUIRED)
 
 IF(PKG_CONFIG_FOUND)
     PKG_CHECK_MODULES (GLIB2   REQUIRED glib-2.0 gobject-2.0 gthread-2.0)
-    PKG_CHECK_MODULES (SVN_DEP REQUIRED gtk+-2.0 apr-1 apr-util-1)
+    PKG_CHECK_MODULES (SVN_DEP REQUIRED gtk+-2.0 apr-1 apr-util-1 libnotify)
 ENDIF(PKG_CONFIG_FOUND)
 
 # APR cflags
@@ -20,7 +20,6 @@ FOREACH(idx RANGE 0 ${LASTIDX})
 ENDFOREACH(idx)
 
 SET(CMAKE_C_FLAGS ${FLAGS})
-
 
 # Add svn include/lib
 FIND_PATH(SVN_HEADER_DIR svn_client.h

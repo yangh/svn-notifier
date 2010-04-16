@@ -5,6 +5,7 @@
 #include "libgsvn/svn-log-entry.h"
 #include "libanjuta/anjuta-command.h"
 #include "libanjuta/anjuta-async-command.h"
+#include "svn-notify.h"
 
 static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 static gboolean query_running = FALSE;
@@ -33,6 +34,9 @@ log_arrived (SvnLogCommand *cmd)
                 svn_log_entry_get_date(entry),
                 svn_log_entry_get_short_log(entry));
         last_rev = svn_log_entry_get_revision(entry);
+
+        svn_notify_entry (entry, NULL, 3);
+
         svn_log_entry_destroy (entry);
     }
 }
