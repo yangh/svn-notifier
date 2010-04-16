@@ -26,9 +26,9 @@ do
         if [ $n -gt 0 ]; then
             let LASTREV=n+1
         fi
+        cat .tmp
     fi
 
-    cat .tmp
     :> .tmp
 
     sleep $DELAY
