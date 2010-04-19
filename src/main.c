@@ -26,17 +26,26 @@ log_arrived (SvnLogCommand *cmd)
 
     entries = svn_log_command_get_entry_queue(cmd);
 
+    gchar *author = NULL;
+    gchar *log = NULL;
+    gchar *date = NULL;
+
     while(! g_queue_is_empty (entries)) {
         entry = g_queue_pop_tail(entries);
-        g_print (" r%ld | %8s | %s | %s\n",
+        author = svn_log_entry_get_author(entry);
+        log = svn_log_entry_get_short_log(entry);
+        date = svn_log_entry_get_date(entry);
+
+        g_print ("r%ld | %8s | %s | %s\n",
                 svn_log_entry_get_revision(entry),
-                svn_log_entry_get_author(entry),
-                svn_log_entry_get_date(entry),
-                svn_log_entry_get_short_log(entry));
+                author, date, log);
         last_rev = svn_log_entry_get_revision(entry);
 
         svn_notify_entry (entry, NULL, 3);
 
+        g_free (author);
+        g_free (log);
+        g_free (date);
         svn_log_entry_destroy (entry);
     }
 }
@@ -50,6 +59,8 @@ log_finished (SvnLogCommand *cmd, guint return_code)
     g_static_mutex_lock (&mutex);
     query_running = FALSE;
     g_static_mutex_unlock (&mutex);
+
+    gtk_main_quit();
 }
 
 static gboolean
@@ -97,7 +108,9 @@ main(int argc, char *argv[])
 
     query_log(NULL);
 
+#if 0
     g_timeout_add (1000 * delay, (GSourceFunc) query_log, NULL);
+#endif
 
     gtk_main ();
 

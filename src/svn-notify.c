@@ -14,16 +14,19 @@ svn_notify_entry (const SvnLogEntry *entry,
 
     if (! notify_is_initted()) notify_init("svn-notify");
 
-    gchar *sum, *body;
+    gchar *author = NULL;
+    gchar *log = NULL;
+    gchar *sum = NULL;
+    gchar *body = NULL;
     NotifyNotification* note;
 
 
-    sum = g_strdup_printf ("%s * %ld",
-                svn_log_entry_get_author(entry),
+    author = svn_log_entry_get_author(entry);
+    log = svn_log_entry_get_full_log(entry);
+    sum = g_strdup_printf ("%s * %ld", author,
                 svn_log_entry_get_revision(entry)
                 );
-    body = g_strdup_printf ("  %s",
-                svn_log_entry_get_full_log(entry));
+    body = g_strdup_printf ("  %s", log);
 
     note = notify_notification_new (sum, body, "gtk-about", NULL);
 
@@ -31,6 +34,8 @@ svn_notify_entry (const SvnLogEntry *entry,
     notify_notification_set_timeout (note, delay);
     notify_notification_show (note, NULL);
 
+    g_free (author);
+    g_free (log);
     g_free (sum);
     g_free (body);
 }
@@ -39,7 +44,9 @@ static void
 closed_callback (NotifyNotification *notification,
                  gpointer            user_data)
 {
+    /*
+    g_message ("Notify closed, unref");
+    */
     g_object_unref (notification);
 }
-
 

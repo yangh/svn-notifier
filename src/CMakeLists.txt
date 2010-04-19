@@ -15,8 +15,8 @@ SET( SVN_SRCS
     svn-notify.c
     )
 
-ADD_EXECUTABLE( test-svn ${SVN_SRCS} )
-TARGET_LINK_LIBRARIES( test-svn
+ADD_EXECUTABLE( svn-notifier ${SVN_SRCS} )
+TARGET_LINK_LIBRARIES( svn-notifier
     gsvn
     anjutacmd
     ${GLIB2_LIBRARIES}

@@ -18,7 +18,8 @@ while [ 1 -gt 0 ];
 do
     #echo "Query svn log: -r$LASTREV:HEAD $SVNPATH"
 
-    svn log -r$LASTREV:HEAD "$SVNPATH" > .tmp 2>/dev/null
+    #svn log -r$LASTREV:HEAD "$SVNPATH" > .tmp 2>/dev/null
+    svn-notifier "$SVNPATH" $LASTREV 5 > .tmp 2>/dev/null
 
     rn=`grep ^r[1-9] .tmp | tail -1 | awk '{print $1}'`
     if [ "x$rn" != "x" ] ;then
